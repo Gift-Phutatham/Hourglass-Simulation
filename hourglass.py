@@ -12,7 +12,9 @@ class HourGlass(object):
         self.steps_per_frame = 1
 
         pygame.init()
-        self.screen = pygame.display.set_mode((750, 750))
+        self.screen_size = 750
+        self.screen = pygame.display.set_mode(
+            (self.screen_size, self.screen_size))
         self.clock = pygame.time.Clock()
         self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
         self.add_glass_component()
@@ -34,8 +36,27 @@ class HourGlass(object):
                 self.clock.tick(50)
 
     def add_glass_component(self):
+        radius = 2
+        one_half = self.screen_size/2
+        one_quarter = self.screen_size/4
+        between_quarters1 = 1.75*self.screen_size/4
+        between_quarters2 = 2.25*self.screen_size/4
+        three_quarter = 3*self.screen_size/4
         static_body = self.space.static_body
-        static_lines = pymunk.Segment(static_body, (125, 500), (500, 500), 3),
+        static_lines = [
+            pymunk.Segment(static_body, (one_quarter, one_quarter),
+                           (three_quarter, one_quarter), radius),  # top
+            pymunk.Segment(static_body, (one_quarter, three_quarter),
+                           (three_quarter, three_quarter), radius),  # bottom
+            pymunk.Segment(static_body, (three_quarter, one_quarter),
+                           (between_quarters2, one_half), radius),  # top-right
+            pymunk.Segment(static_body, (between_quarters2, one_half),
+                           (three_quarter, three_quarter), radius),  # bottom-right
+            pymunk.Segment(static_body, (one_quarter, one_quarter),
+                           (between_quarters1, one_half), radius), # top-left
+            pymunk.Segment(static_body, (between_quarters1, one_half),
+                           (one_quarter, three_quarter), radius) # bottom_left
+        ]
         for line in static_lines:
             line.elasticity = 0.95
             line.friction = 0.9
