@@ -67,7 +67,7 @@ class HourGlass(object):
         radius = 15
         inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
         body = pymunk.Body(mass, inertia)
-        x = random.randint(int(self.one_quarter), int(self.three_quarter))
+        x = random.randint(int(self.one_quarter+radius), int(self.three_quarter-radius))
         y = self.one_quarter + radius
         body.position = x, y
         shape = pymunk.Circle(body, radius, (0, 0))
