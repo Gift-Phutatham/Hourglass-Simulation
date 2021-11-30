@@ -6,24 +6,12 @@ import pymunk.pygame_util
 
 class HourGlass(object):
     def __init__(self):
-        self.gravity = float(
-            input("Please enter the gravity: ")
-        )
-        self.friction = float(
-            input("Please enter the friction of the hourglass: ")
-        )
-        self.number_of_balls = int(
-            input("Please enter the number of the balls: ")
-        )
-        self.ball_mass = float(
-            input("PLease enter the mass of the ball: ")
-        )
-        self.ball_radius = float(
-            input("Please enter the radius of the ball: ")
-        )
-        self.ball_elasticity = float(
-            input("Please enter the elasticity of the ball: ")
-        )
+        self.gravity = float(input("Gravity: "))
+        self.friction = float(input("Friction of the hourglass: "))
+        self.number_of_balls = int(input("Number of the balls: "))
+        self.ball_mass = float(input("Mass of the ball: "))
+        self.ball_radius = float(input("Radius of the ball: "))
+        self.ball_elasticity = float(input("Elasticity of the ball: "))
 
         pygame.init()
         self.space = pymunk.Space()
