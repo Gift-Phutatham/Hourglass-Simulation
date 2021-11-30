@@ -6,13 +6,18 @@ import pymunk.pygame_util
 
 class HourGlass(object):
     def __init__(self):
+        pygame.init()
         self.space = pymunk.Space()
         self.space.gravity = (0, 900)
+        self.screen_size = 750
+        self.screen = pygame.display.set_mode(
+            (self.screen_size, self.screen_size)
+        )
+        self.running = True
         self.dt = 1/50
         self.steps_per_frame = 1
-
-        pygame.init()
-        self.screen_size = 750
+        self.clock = pygame.time.Clock()
+        self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
 
         self.one_quarter = self.screen_size/4
         self.between_quarters1 = 1.75*self.screen_size/4
@@ -20,23 +25,22 @@ class HourGlass(object):
         self.between_quarters2 = 2.25*self.screen_size/4
         self.three_quarter = 3*self.screen_size/4
 
-        self.screen = pygame.display.set_mode(
-            (self.screen_size, self.screen_size)
-        )
-        self.clock = pygame.time.Clock()
-        self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
-        self.add_glass_component()
-        self.balls = []
-        self.running = True
+        self.create_glass_component()
+        self.barrier = self.create_barrier()
 
     def run(self):
-        number_of_balls = 20
+        number_of_balls = 70
         for _ in range(number_of_balls):
             self.create_ball()
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        if self.barrier != None:
+                            self.space.remove(self.barrier, self.barrier.body)
+                            self.barrier = None
             self.screen.fill((31, 40, 57))
             self.space.debug_draw(self.draw_options)
             for _ in range(10):
@@ -44,7 +48,7 @@ class HourGlass(object):
             pygame.display.flip()
             self.clock.tick(50)
 
-    def add_glass_component(self):
+    def create_glass_component(self):
         radius = 2
         positions = [
             ((self.one_quarter, self.one_quarter),
@@ -69,9 +73,12 @@ class HourGlass(object):
             self.space.add(segment)
 
     def create_ball(self):
+        balls = []
         mass = 10
+        inner_radius = 0
         radius = 10
-        inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
+        offset = (0, 0)
+        inertia = pymunk.moment_for_circle(mass, inner_radius, radius, offset)
         body = pymunk.Body(mass, inertia)
         x = random.randint(int(self.one_quarter+radius),
                            int(self.three_quarter-radius))
@@ -81,7 +88,16 @@ class HourGlass(object):
         shape.elasticity = 0.5
         shape.friction = 1
         self.space.add(body, shape)
-        self.balls.append(shape)
+        balls.append(shape)
+
+    def create_barrier(self):
+        body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        body.position = (self.one_half, self.one_half)
+        shape = pymunk.Poly.create_box(
+            body, (abs(self.between_quarters2-self.between_quarters1), 5)
+        )
+        self.space.add(body, shape)
+        return shape
 
 
 hour_glass = HourGlass()
