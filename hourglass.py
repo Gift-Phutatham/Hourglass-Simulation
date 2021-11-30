@@ -76,6 +76,7 @@ class HourGlass(object):
             )
             segment.elasticity = 0.5
             segment.friction = self.friction
+            segment.color = pygame.color.THECOLORS['brown']
             self.space.add(segment)
 
     def create_ball(self):
@@ -93,6 +94,7 @@ class HourGlass(object):
         shape = pymunk.Circle(body, self.ball_radius, (0, 0))
         shape.elasticity = self.ball_elasticity
         shape.friction = 1
+        shape.color = pygame.color.THECOLORS['darkolivegreen2']
         self.space.add(body, shape)
         balls.append(shape)
 
@@ -102,6 +104,7 @@ class HourGlass(object):
         shape = pymunk.Poly.create_box(
             body, (abs(self.between_quarters2-self.between_quarters1), 5)
         )
+        shape.color = pygame.color.THECOLORS['darkorange3']
         self.space.add(body, shape)
         return shape
 
