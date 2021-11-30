@@ -21,7 +21,8 @@ class HourGlass(object):
         self.three_quarter = 3*self.screen_size/4
 
         self.screen = pygame.display.set_mode(
-            (self.screen_size, self.screen_size))
+            (self.screen_size, self.screen_size)
+        )
         self.clock = pygame.time.Clock()
         self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
         self.add_glass_component()
@@ -43,25 +44,25 @@ class HourGlass(object):
 
     def add_glass_component(self):
         radius = 2
-        static_body = self.space.static_body
-        static_lines = [
-            pymunk.Segment(static_body, (self.one_quarter, self.one_quarter),
-                           (self.three_quarter, self.one_quarter), radius),  # top
-            pymunk.Segment(static_body, (self.one_quarter, self.three_quarter),
-                           (self.three_quarter, self.three_quarter), radius),  # bottom
-            pymunk.Segment(static_body, (self.three_quarter, self.one_quarter),
-                           (self.between_quarters2, self.one_half), radius),  # top-right
-            pymunk.Segment(static_body, (self.between_quarters2, self.one_half),
-                           (self.three_quarter, self.three_quarter), radius),  # bottom-right
-            pymunk.Segment(static_body, (self.one_quarter, self.one_quarter),
-                           (self.between_quarters1, self.one_half), radius),  # top-left
-            pymunk.Segment(static_body, (self.between_quarters1, self.one_half),
-                           (self.one_quarter, self.three_quarter), radius)  # bottom_left
-        ]
-        for line in static_lines:
-            line.elasticity = 0.95
-            line.friction = 0.9
-        self.space.add(*static_lines)
+        positions = [((self.one_quarter, self.one_quarter),
+                      (self.three_quarter, self.one_quarter)),
+                     ((self.one_quarter, self.three_quarter),
+                      (self.three_quarter, self.three_quarter)),
+                     ((self.three_quarter, self.one_quarter),
+                      (self.between_quarters2, self.one_half)),
+                     ((self.between_quarters2, self.one_half),
+                      (self.three_quarter, self.three_quarter)),
+                     ((self.one_quarter, self.one_quarter),
+                      (self.between_quarters1, self.one_half)),
+                     ((self.between_quarters1, self.one_half),
+                      (self.one_quarter, self.three_quarter))]
+        for position in positions:
+            segment = pymunk.Segment(
+                self.space.static_body, position[0], position[1], radius
+            )
+            segment.elasticity = 0.95
+            segment.friction = 0.9
+            self.space.add(segment)
 
     def create_ball(self):
         mass = 10
