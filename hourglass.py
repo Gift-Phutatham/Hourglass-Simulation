@@ -6,9 +6,28 @@ import pymunk.pygame_util
 
 class HourGlass(object):
     def __init__(self):
+        self.gravity = float(
+            input("Please enter the gravity: ")
+        )
+        self.friction = float(
+            input("Please enter the friction of the hourglass: ")
+        )
+        self.number_of_balls = int(
+            input("Please enter the number of the balls: ")
+        )
+        self.ball_mass = float(
+            input("PLease enter the mass of the ball: ")
+        )
+        self.ball_radius = float(
+            input("Please enter the radius of the ball: ")
+        )
+        self.ball_elasticity = float(
+            input("Please enter the elasticity of the ball: ")
+        )
+
         pygame.init()
         self.space = pymunk.Space()
-        self.space.gravity = (0, 900)
+        self.space.gravity = (0, self.gravity)
         self.screen_size = 750
         self.screen = pygame.display.set_mode(
             (self.screen_size, self.screen_size)
@@ -29,8 +48,7 @@ class HourGlass(object):
         self.barrier = self.create_barrier()
 
     def run(self):
-        number_of_balls = 70
-        for _ in range(number_of_balls):
+        for _ in range(self.number_of_balls):
             self.create_ball()
         while self.running:
             for event in pygame.event.get():
@@ -68,24 +86,24 @@ class HourGlass(object):
             segment = pymunk.Segment(
                 self.space.static_body, position[0], position[1], radius
             )
-            segment.elasticity = 0.95
-            segment.friction = 1
+            segment.elasticity = 0.5
+            segment.friction = self.friction
             self.space.add(segment)
 
     def create_ball(self):
         balls = []
-        mass = 10
         inner_radius = 0
-        radius = 10
         offset = (0, 0)
-        inertia = pymunk.moment_for_circle(mass, inner_radius, radius, offset)
-        body = pymunk.Body(mass, inertia)
-        x = random.randint(int(self.one_quarter+radius),
-                           int(self.three_quarter-radius))
-        y = self.one_quarter + radius
+        inertia = pymunk.moment_for_circle(
+            self.ball_mass, inner_radius, self.ball_radius, offset
+        )
+        body = pymunk.Body(self.ball_mass, inertia)
+        x = random.randint(int(self.one_quarter + self.ball_radius),
+                           int(self.three_quarter - self.ball_radius))
+        y = self.one_quarter + self.ball_radius
         body.position = x, y
-        shape = pymunk.Circle(body, radius, (0, 0))
-        shape.elasticity = 0.5
+        shape = pymunk.Circle(body, self.ball_radius, (0, 0))
+        shape.elasticity = self.ball_elasticity
         shape.friction = 1
         self.space.add(body, shape)
         balls.append(shape)
