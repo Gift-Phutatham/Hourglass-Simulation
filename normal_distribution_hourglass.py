@@ -8,7 +8,7 @@ class NormalDistributionHourglass(object):
     def __init__(self):
         pygame.init()
         self.space = pymunk.Space()
-        self.space.gravity = (0, 8000)
+        self.space.gravity = (0, 2500)
         self.screen_size = 750
         self.screen = pygame.display.set_mode(
             (self.screen_size, self.screen_size)
