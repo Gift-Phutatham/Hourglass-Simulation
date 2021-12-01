@@ -4,7 +4,7 @@ import pymunk
 import pymunk.pygame_util
 
 
-class HourGlass(object):
+class Hourglass(object):
     def __init__(self):
         self.gravity = float(input("Gravity: "))
         self.friction = float(input("Friction of the hourglass: "))
@@ -107,5 +107,5 @@ class HourGlass(object):
         return shape
 
 
-hour_glass = HourGlass()
-hour_glass.run()
+hourglass = Hourglass()
+hourglass.run()
