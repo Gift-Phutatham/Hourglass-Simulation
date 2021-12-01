@@ -109,3 +109,4 @@ class Hourglass(object):
 
 hourglass = Hourglass()
 hourglass.run()
+pygame.quit()
