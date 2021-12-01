@@ -20,11 +20,10 @@ class HourGlass(object):
         self.screen = pygame.display.set_mode(
             (self.screen_size, self.screen_size)
         )
-        self.running = True
-        self.dt = 1/50
-        self.steps_per_frame = 1
-        self.clock = pygame.time.Clock()
         self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
+        self.running = True
+        self.fps = 50
+        self.clock = pygame.time.Clock()
 
         self.one_quarter = self.screen_size/4
         self.between_quarters1 = 1.75*self.screen_size/4
@@ -49,10 +48,10 @@ class HourGlass(object):
                             self.barrier = None
             self.screen.fill((31, 40, 57))
             self.space.debug_draw(self.draw_options)
-            for _ in range(10):
-                self.space.step(self.dt/10)
             pygame.display.flip()
-            self.clock.tick(50)
+            for _ in range(10):
+                self.space.step(1/self.fps/10)
+            self.clock.tick(self.fps)
 
     def create_glass_component(self):
         radius = 2
@@ -81,17 +80,16 @@ class HourGlass(object):
 
     def create_ball(self):
         balls = []
-        inner_radius = 0
         offset = (0, 0)
         inertia = pymunk.moment_for_circle(
-            self.ball_mass, inner_radius, self.ball_radius, offset
+            self.ball_mass, 0, self.ball_radius, offset
         )
         body = pymunk.Body(self.ball_mass, inertia)
         x = random.randint(int(self.one_quarter + self.ball_radius),
                            int(self.three_quarter - self.ball_radius))
         y = self.one_quarter + self.ball_radius
         body.position = x, y
-        shape = pymunk.Circle(body, self.ball_radius, (0, 0))
+        shape = pymunk.Circle(body, self.ball_radius, offset)
         shape.elasticity = self.ball_elasticity
         shape.friction = 1
         shape.color = pygame.color.THECOLORS['darkolivegreen2']
@@ -104,7 +102,7 @@ class HourGlass(object):
         shape = pymunk.Poly.create_box(
             body, (abs(self.between_quarters2-self.between_quarters1), 5)
         )
-        shape.color = pygame.color.THECOLORS['darkorange3']
+        shape.color = pygame.color.THECOLORS['brown1']
         self.space.add(body, shape)
         return shape
 
