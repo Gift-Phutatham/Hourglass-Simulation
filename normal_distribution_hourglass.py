@@ -15,7 +15,7 @@ class NormalDistributionHourglass(object):
         )
         self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
         self.running = True
-        self.fps = 60
+        self.fps = 50
         self.clock = pygame.time.Clock()
 
     def run(self):
@@ -32,49 +32,50 @@ class NormalDistributionHourglass(object):
             self.clock.tick(self.fps)
 
     def create_component(self):
-        for _ in range(400):
+        for _ in range(450):
             self.create_ball()
 
         self.create_segment()
 
         temp = 25
         for i in range(100, self.screen_size, 50):
-            self.create_constraint((i, 200))
             self.create_constraint((i-temp, 250))
             self.create_constraint((i, 300))
             self.create_constraint((i-temp, 350))
+            self.create_constraint((i, 400))
 
     def create_ball(self):
-        temp = 50
+        balls = []
         mass = 1
         radius = 7
-        balls = []
+        offset = 50
         inertia = pymunk.moment_for_circle(mass, 0, radius)
         body = pymunk.Body(mass, inertia)
-        x = randrange(temp, self.screen_size-temp)
-        y = randrange(0, temp)
+        x = randrange(offset, self.screen_size-offset)
+        y = randrange(0, offset)
         body.position = x, y
-        shape = pymunk.Circle(body, radius)
-        shape.elasticity = 0.1
-        shape.friction = 0.1
-        self.space.add(body, shape)
-        balls.append(shape)
+        ball = pymunk.Circle(body, radius)
+        ball.elasticity = 0.1
+        ball.friction = 0.8
+        ball.color = pygame.color.THECOLORS['darkolivegreen2']
+        self.space.add(body, ball)
+        balls.append(ball)
 
     def create_segment(self):
         radius = 3
-        temp1 = 150
+        offset1 = 150
         positions = [
             ((0, self.screen_size), (self.screen_size, self.screen_size)),
-            ((0, 0), (0, temp1/2)),
-            ((self.screen_size, 0), (self.screen_size, temp1/2)),
-            ((0, temp1/2), (self.screen_size/2 - temp1/2, temp1)),
-            ((self.screen_size, temp1/2), (self.screen_size/2 + temp1/2, temp1))
+            ((0, 0), (0, offset1/2)),
+            ((self.screen_size, 0), (self.screen_size, offset1/2)),
+            ((0, offset1/2), (self.screen_size/2 - offset1/2, offset1)),
+            ((self.screen_size, offset1/2), (self.screen_size/2 + offset1/2, offset1))
         ]
-        temp2 = 100
+        offset2 = 100
         for i in range(0, 400, 50):
-            positions.append(((self.screen_size/2 - i, self.screen_size/2 + temp2),
+            positions.append(((self.screen_size/2 - i, self.screen_size/2 + offset2),
                               (self.screen_size/2 - i, self.screen_size)))
-            positions.append(((self.screen_size/2 + i, self.screen_size/2 + temp2),
+            positions.append(((self.screen_size/2 + i, self.screen_size/2 + offset2),
                               (self.screen_size/2 + i, self.screen_size)))
         for position in positions:
             segment = pymunk.Segment(
@@ -90,6 +91,7 @@ class NormalDistributionHourglass(object):
         constraint = pymunk.Circle(self.space.static_body, radius, offset)
         constraint.elasticity = 0.1
         constraint.friction = 0.5
+        constraint.color = pygame.color.THECOLORS['brown1']
         self.space.add(constraint)
 
 
